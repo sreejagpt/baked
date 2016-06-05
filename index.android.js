@@ -10,40 +10,54 @@ import {
 } from 'react-native';
 
 class baked extends Component {
+
+  constructor(props) {
+    super(props);
+    this.defaultTimeText = '--:--';
+
+    this.state = {
+      timeText: this.defaultTimeText,
+    }
+  }
+
   render() {
     return (
       <View style={styles.outer}>
         <Image source={require('./assets/images/background.jpg')} style={styles.verticalLayout}>
             <Text style={styles.title}>I want my bread ready at</Text>
             <View style={styles.pickerContainer}>
-            <TouchableWithoutFeedback
-              onPress={this.showPicker.bind(this, 'baked')}>
-              <View>
-                <Text style={styles.picker}>00:00</Text>
-              </View>
-            </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback
+                onPress={this.showPicker.bind(this)}>
+                <View>
+                  <Text style={styles.picker}>{this.state.timeText}</Text>
+                </View>
+              </TouchableWithoutFeedback>
               <Text style={{width: 15}}/>
               <Text style={styles.picker}>12/06/2016</Text>
             </View>
+            <Text>Boo</Text>
+
         </Image>
+
       </View>
     );
   }
 
-  async showPicker(stateKey, options) {
+  async showPicker(event, options) {
     try {
      const {action, minute, hour} = await TimePickerAndroid.open(options);
+     event.persist();
      var newState = {};
      if (action === TimePickerAndroid.timeSetAction) {
-       newState[stateKey + 'Text'] = _formatTime(hour, minute);
-       newState[stateKey + 'Hour'] = hour;
-       newState[stateKey + 'Minute'] = minute;
+       newState['timeText'] = _formatTime(hour, minute);
+       newState['hour'] = hour;
+       newState['minute'] = minute;
      } else if (action === TimePickerAndroid.dismissedAction) {
-       newState[stateKey + 'Text'] = 'dismissed';
+       //cancel button pressed
      }
      this.setState(newState);
     } catch ({code, message}) {
-      console.warn(`Error in example '${stateKey}': `, message);
+      console.warn('Error: ', message);
     }
   }
 }
@@ -80,7 +94,8 @@ const styles = StyleSheet.create({
   picker: {
     backgroundColor: '#ffffff',
     textAlign: 'center',
-    height: 20,
+    height: 40,
+    fontSize: 25,
   },
 });
 
