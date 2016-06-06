@@ -41,7 +41,10 @@ class baked extends Component {
           </TouchableWithoutFeedback>
           <Text style={{width: 15}}/>
           <TouchableWithoutFeedback
-            onPress={this.showDatePicker.bind(this)}>
+            onPress={this.showDatePicker.bind(this, 'sg', {
+              date: this.state.minDate,
+              minDate: this.eighteenHrsFifteenMinsFromNow(),
+            })}>
             <View>
               <Text style={styles.picker}>{this.state.dateText}</Text>
             </View>
@@ -52,6 +55,13 @@ class baked extends Component {
         </Button>
       </View>
     );
+  }
+
+  eighteenHrsFifteenMinsFromNow() {
+    var future = new Date();
+    future.setHours(future.getHours() + 18);
+    future.setMinutes(future.getMinutes() + 15);
+    return future;
   }
 
   async showTimePicker(event, options) {
@@ -76,7 +86,6 @@ class baked extends Component {
     try {
       var newState = {};
       const {action, year, month, day} = await DatePickerAndroid.open(options);
-      event.persist();
       if (action === DatePickerAndroid.dismissedAction) {
         //cancel button pressed
       } else {
